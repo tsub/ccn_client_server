@@ -2,7 +2,7 @@ require "json"
 require "socket"
 
 INTEREST_PACKET_PORT = 50001
-DUMMY_HOST = '127.0.0.1'
+DUMMY_HOST = '192.168.11.254'
 
 $stdout.sync = true
 
@@ -26,11 +26,9 @@ puts "Access to #{content_name}"
 
 udp = UDPSocket.open()
 
-# sockaddr = Socket.pack_sockaddr_in(50001, "192.168.11.3")
 sockaddr = Socket.pack_sockaddr_in(INTEREST_PACKET_PORT, DUMMY_HOST)
 
-# message = JSON.dump({ name: content_name })
-message = content_name
+message = JSON.dump({ name: content_name })
 
 udp.send(message, 0, sockaddr)
 

@@ -1,7 +1,7 @@
 require 'socket'
 require 'json'
 
-DUMMY_HOST = '127.0.0.1'
+DUMMY_HOST = '192.168.11.254'
 SERVER_ADDRESS = '0.0.0.0'
 SERVER_PORT = 50001
 MESSAGE_LENGTH = 65535
