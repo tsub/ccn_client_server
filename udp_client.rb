@@ -46,13 +46,15 @@ i = 0
 while response = udp.recv(65535)
   if i == 0
     data_size = response.to_i
+    p data_size
   elsif i == 1
     file_name = response
+    p file_name
   else
     progress_bar(i, data_size)
     response_image << response
 
-    if i == data_size
+    if i - 1 == data_size
       File.write(prefix_downloads_dir(file_name), response_image.join)
       udp.close
       break

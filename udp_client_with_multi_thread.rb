@@ -14,14 +14,10 @@ end
 
 def access_to_content
   content_name = ARGV.empty? ? 'apple.jpg' : ARGV[0]
-  # puts content_name
 
   udp = UDPSocket.open()
 
-  # sockaddr = Socket.pack_sockaddr_in(50001, "192.168.11.3")
   sockaddr = Socket.pack_sockaddr_in(INTEREST_PACKET_PORT, DUMMY_HOST)
-
-  # message = JSON.dump({ name: content_name })
 
   udp.send(content_name, 0, sockaddr)
 
@@ -29,7 +25,6 @@ def access_to_content
   file_name = 'unknown'
 
   Signal.trap(:INT) do
-    # File.write(prefix_downloads_dir(file_name), response_image.join)
     udp.close
   end
 
@@ -42,8 +37,7 @@ def access_to_content
     else
       response_image << response
 
-      if i == data_size
-        # File.write(prefix_downloads_dir(file_name), response_image.join)
+      if i - 1 == data_size
         udp.close
 
         $success_to_access += 1

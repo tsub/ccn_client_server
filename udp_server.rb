@@ -9,6 +9,8 @@ MESSAGE_LENGTH = 65535
 def send_content_list(udp_socket, contents_list)
   socket_address = Socket.pack_sockaddr_in(50002, DUMMY_HOST)
 
+  contents_list = contents_list.map { |content| content.split('/').last }
+
   message = JSON.dump({ contents: contents_list })
 
   udp_socket.send(message, 0, socket_address)
@@ -46,7 +48,7 @@ while true
       p request_content
 
       if request_content
-        image_file = File.read(request_content)
+        image_file = File.binread(request_content)
 
         data_size = image_file.lines.length.to_s
         udp_socket.send(data_size, 0, ip, port)
