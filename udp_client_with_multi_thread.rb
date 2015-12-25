@@ -39,7 +39,7 @@ def access_to_content
     else
       response_image << response
 
-      if i == data_size
+      if i - 1 == data_size
         udp.close
 
         $success_to_access += 1
