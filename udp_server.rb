@@ -48,17 +48,26 @@ while true
       p request_content
 
       if request_content
-        image_file = File.binread(request_content)
+        file = File.binread(request_content)
 
-        data_size = image_file.lines.length.to_s
-        udp_socket.send(data_size, 0, ip, port)
-
-        file_name = File.basename(request_content)
-        udp_socket.send(file_name, 0, ip, port)
-
-        image_file.each_line do |split_image|
-          udp_socket.send(split_image, 0, ip, port)
+        file.each_line do |split_file|
+          response = {
+            data_size: file.lines.length.to_s,
+            file_name: File.basename(request_content),
+            data: split_file
+          }
+          udp_socket.send(JSON.dump(response), 0, ip, port)
         end
+
+        # data_size = file.lines.length.to_s
+        # udp_socket.send(data_size, 0, ip, port)
+        #
+        # file_name = File.basename(request_content)
+        # udp_socket.send(file_name, 0, ip, port)
+        #
+        # file.each_line do |split_file|
+        #   udp_socket.send(split_file, 0, ip, port)
+        # end
       end
     end
   end
