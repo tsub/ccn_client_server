@@ -1,12 +1,17 @@
 require 'parallel'
-require "json"
-require "socket"
+require 'json'
+require 'socket'
 
 INTEREST_PACKET_PORT = 50001
 DUMMY_HOST = '192.168.11.254'
 THREAD_NUMBER = 1000
 
 $success_to_access = 0
+$start_time = Time.now
+
+def working_time
+  Time.now - $start_time
+end
 
 def prefix_downloads_dir(str)
   "downloads/#{str}"
@@ -44,7 +49,7 @@ def access_to_content
       udp.close
 
       $success_to_access += 1
-      print "\rsuccess rate to access: #{$success_to_access} / #{THREAD_NUMBER}"
+      print "\rsuccess rate to access: #{$success_to_access} / #{THREAD_NUMBER}  working time: #{working_time}"
 
       break
     end
