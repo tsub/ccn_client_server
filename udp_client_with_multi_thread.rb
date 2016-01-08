@@ -23,7 +23,7 @@ def access_to_content
 
   udp.send(message, 0, sockaddr)
 
-  response_image = []
+  response_data = []
   file_name = 'unknown'
 
   Signal.trap(:INT) do
@@ -32,24 +32,22 @@ def access_to_content
 
   i = 0
   while response = udp.recv(65535)
-    if i == 0
-      data_size = response.to_i
-    elsif i == 1
-      file_name = response
-    else
-      response_image << response
+    parsed_response = JSON.parse(response)
 
-      if i - 1 == data_size
-        udp.close
-
-        $success_to_access += 1
-        print "\rsuccess rate to access: #{$success_to_access} / #{THREAD_NUMBER}"
-
-        break
-      end
-    end
+    data_size = parsed_response['data_size'].to_i if data_size.nil?
+    file_name = parsed_response['file_name'] if file_name == 'unknown'
     
     i += 1
+    response_data << parsed_response['data']
+
+    if i == data_size
+      udp.close
+
+      $success_to_access += 1
+      print "\rsuccess rate to access: #{$success_to_access} / #{THREAD_NUMBER}"
+
+      break
+    end
   end
 end
 

@@ -32,32 +32,28 @@ message = JSON.dump({ name: content_name })
 
 udp.send(message, 0, sockaddr)
 
-response_image = []
+response_data = []
 file_name = 'unknown'
 
 Signal.trap(:INT) do
-  File.write(prefix_downloads_dir(file_name), response_image.join)
+  File.write(prefix_downloads_dir(file_name), response_data.join)
   udp.close
 end
 
 i = 0
 while response = udp.recv(65535)
-  if i == 0
-    data_size = response.to_i
-    p data_size
-  elsif i == 1
-    file_name = response
-    p file_name
-  else
-    progress_bar(i, data_size)
-    response_image << response
+  parsed_response = JSON.parse(response)
 
-    if i - 1 == data_size
-      File.write(prefix_downloads_dir(file_name), response_image.join)
-      udp.close
-      break
-    end
-  end
+  data_size = parsed_response['data_size'].to_i if data_size.nil?
+  file_name = parsed_response['file_name'] if file_name == 'unknown'
   
   i += 1
+  progress_bar(i, data_size)
+  response_data << parsed_response['data']
+
+  if i == data_size
+    File.write(prefix_downloads_dir(file_name), response_data.join)
+    udp.close
+    break
+  end
 end
